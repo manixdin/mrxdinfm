@@ -24,10 +24,10 @@
 		    height: 100vh;
 		}
 		.main-form{
-			padding: 10px 10px;
+			padding: 50px 10px 10px 10px;
 		    flex-wrap: wrap;
 		    display: flex;
-		    justify-content: center;
+		    justify-content: center; 
 		}
 		.main-form input{
 			display: block;
@@ -48,15 +48,20 @@
 			height: 30px;	
 
 		}
-		#convert{
+		#clear{
+			background: #DD5144!important;
+		}
+		#convert, #clear{
 			width: 100px;
 			border: none;
 			height: 30px;
-			background-color: #fff; 
+			background-color: #4C8BF5; 
 			margin-top:10px;
+			margin-left:10px;
+    		color: #fff!important;
 		}
 		.detail-form{
-			padding: 0px 10px 10px 10px;
+			padding: 0px 10px 50px 10px;
 		}
 		.detail-form img{
 			width: 100%;
@@ -85,11 +90,37 @@
 		    text-decoration: none;
     		color: #000;
 		}
+		.copyright{
+			position: fixed;
+			bottom: 0;
+			background-color: #FFCD46;
+			box-shadow: 0px 0px 20px rgb(0 0 0 / 10%);
+			display: block;
+			width: 100%;
+			color: #000;
+			text-align: center;
+			padding: 5px 0px;
+		}
+		.toptitle{
+			position: fixed;
+			top: 0;
+			background-color: #fff;
+			box-shadow: 0px 0px 20px rgb(0 0 0 / 10%);
+			display: block;
+			width: 100%;
+			color: #000;
+			text-align: center;
+			padding: 5px 0px;
+			z-index: 10;
+		}
 	</style>
 </head>
 <body>
+	<div class="toptitle"> YT Downloader </div>
+
 	<div class="main-form">
-		<input type="text" id="url" value="https://youtu.be/I7dRB7mTtLE">
+		<input type="text" id="url" placeholder="Enter link here...">
+	    <button id="clear">clear</button>
 	    <button id="convert">submit</button>
 	</div>
 
@@ -99,6 +130,8 @@
 		<div id="formats"></div>
 	</div>
 
+	<div class="copyright"> Developed by Mr Xdin </div>
+
 </body>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
@@ -107,7 +140,9 @@
 		let url = $('#url').val();
 		
 		const data = { url : url };
-
+		$('#title').html('');
+		$('#image').hide('');
+		$('#formats').html('');
 		fetch('https://ssyoutube.com/api/convert', {
 		  method: 'POST',
 		  headers: {
@@ -130,12 +165,12 @@
 	});
 
 	function showData(data){
-		console.log(data);
 		let title = data.meta.title;
 		let image = data.thumb;
 		let formats = data.url;
 		$('#title').text(title);
 		$('#image').attr('src', image);
+		$('#image').show('500');
 
 		let formatContents = '';
 		for(let i=0; i < formats.length; i++){
@@ -144,5 +179,12 @@
 		}
 		$('#formats').append(formatContents);
 	}
+
+	$('#clear').click(function(){
+		$('#url').val('');
+		$('#title').html('');
+		$('#image').hide('');
+		$('#formats').html('');
+	});
 </script>
 </html>
