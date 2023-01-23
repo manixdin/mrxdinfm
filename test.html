@@ -69,6 +69,9 @@
 		#title{
 			margin: 2px 0px!important;
     		color: #000!important;
+    		text-overflow: ellipsis;
+		    white-space: nowrap;
+		    overflow: hidden;
 		}
 
 		#formats{
@@ -113,22 +116,47 @@
 			padding: 5px 0px;
 			z-index: 10;
 		}
+		.novideo{
+			background-color: white;
+			color: #000;
+			text-align: center;
+			padding: 30px 10px;
+			margin: 10px;
+			display: none;
+			font-size: 14px;
+		}
+		.processing{
+			background-color: white;
+			color: #000;
+			text-align: center;
+			padding: 10px 10px;
+			margin: 10px;
+			font-size: 14px;
+			display: none;
+		}
 	</style>
 </head>
 <body>
-	<div class="toptitle"> YT Downloader </div>
+	<div class="toptitle"> Video Downloader </div>
 
 	<div class="main-form">
 		<input type="text" id="url" placeholder="Enter link here...">
 	    <button id="clear">clear</button>
 	    <button id="convert">submit</button>
 	</div>
-
+	<div class="novideo">
+		<h2>No Video Found in this url. Please check it once. Thank You.</h2>
+	</div> 
+	<div class="processing">
+		<h2>Processing...</h2>
+	</div> 
 	<div class="detail-form">
 		<p id="title"></p>
 		<img id="image">
 		<div id="formats"></div>
 	</div>
+
+	
 
 	<div class="copyright"> Developed by Mr Xdin </div>
 
@@ -137,6 +165,8 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
 <script type="text/javascript">
 	$('#convert').click(function(){
+		$('.novideo').hide();
+		$('.processing').show();
 		let url = $('#url').val();
 		
 		const data = { url : url };
@@ -152,19 +182,26 @@
 		})
 		  .then((response) => response.json())
 		  .then((data) => {
+			$('.processing').hide();
 		    if(!data.hasOwnProperty('cipher')){
-		    	alert('no data found');
+		    	if(data.hasOwnProperty('hosting')){
+		    		if(data.hosting == 'instagram.com') showData(data);
+		    		else $('.novideo').show();
+		    	} 
+		    	else $('.novideo').show();
 		    }
 		    else{
 		    	showData(data);
 		    }
 		  })
 		  .catch((error) => {
-		    console.warn(error);
+		$('.processing').hide();
+		    $('.novideo').show();
 		  });
 	});
 
 	function showData(data){
+		$('.processing').hide();
 		let title = data.meta.title;
 		let image = data.thumb;
 		let formats = data.url;
@@ -175,7 +212,7 @@
 		let formatContents = '';
 		for(let i=0; i < formats.length; i++){
 			formatsData = formats[i];
-			formatContents += `<a href="${formatsData.url}" target="_blank" download="${formatsData.name}"> ${formatsData.subname}.${formatsData.name} ${formatsData.no_audio ? '🔇' : '🔊'}  </a><br>`;
+			formatContents += `<a href="${formatsData.url}" target="_blank" download="${formatsData.name}"> ${formatsData.subname || 'Instagram'}.${formatsData.name} ${formatsData.no_audio ? '🔇' : '🔊'}  </a><br>`;
 		}
 		$('#formats').append(formatContents);
 	}
